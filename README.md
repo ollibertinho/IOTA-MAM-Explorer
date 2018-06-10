@@ -4,7 +4,7 @@ IOTA-MAM-Explorer example application for fetching IOTA-MAM-Data (Masked Autheti
 
 ## Getting Started
 
-git clone git@github.com:ollibertinho/IOTA-MAM-Explorer.git && cd IOTA-MAM-Explorer && npm i
+git clone https://github.com/ollibertinho/IOTA-MAM-Explorer && cd IOTA-MAM-Explorer && npm i
 
 ### Prerequisites
 
