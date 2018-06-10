@@ -21,7 +21,7 @@ const options = {
 
 var router = express.Router();
 var mamState = Mam.init(iota);
-app.use(express.static(__dirname + '/vendor'));
+app.use(express.static(__dirname + '/assets'));
 app.use(express.static(__dirname + '/node_modules'));
 app.use(subdomain('mam', router));
 
