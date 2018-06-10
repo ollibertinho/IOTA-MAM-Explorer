@@ -1,0 +1,29 @@
+{
+  "name": "iota-mam-explorer",
+  "version": "1.0.0",
+  "description": "IOTA-MAM-Explorer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ollibertinho/IOTA-MAM-Explorer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ollibertinho/IOTA-MAM-Explorer/issues"
+  },
+  "homepage": "https://github.com/ollibertinho/IOTA-MAM-Explorer#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "express-subdomain": "^1.0.5",
+    "fs": "0.0.1-security",
+    "http": "0.0.0",
+    "https": "^1.0.0",
+    "iota.lib.js": "^0.4.7",
+    "mam.client.js": "git+https://github.com/iotaledger/mam.client.js.git",
+    "socket.io": "^2.1.1"
+  }
+}

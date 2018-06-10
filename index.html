@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<meta name="google-site-verification" content="3TZbitnn4LN3PT-2-y0h2ig7ye7eip88rmarJ2D0Vkc" />
+    <title>IOTA MAM Explorer</title>
+
+	<!-- CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="bootstrap/css/glyphicon.min.css" rel="stylesheet">
+	<link href="toastr/build/toastr.min.css" rel="stylesheet"/>
+
+	<!-- JavaScript -->
+    <script src = "jquery/jquery.min.js"></script>
+    <script src = "bootstrap/js/bootstrap.bundle.min.js"></script>	
+    <script src = "socketio/socket.io.js"></script>
+	<script src = "toastr/build/toastr.min.js"></script>
+	<script src = "iota.lib.js/dist/iota.min.js"></script>
+
+    <!-- Custom styles for this template -->
+    <style>
+      body {
+        padding-top: 54px;
+      }
+      @media (min-width: 992px) {
+        body {
+          padding-top: 56px;
+        }
+      }
+		pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+		.string { color: green; }
+		.number { color: darkorange; }
+		.boolean { color: blue; }
+		.null { color: magenta; }
+		.key { color: red; }		
+		
+    </style>
+  </head>
+
+  <body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+      <div class="container">
+        <img src="images/iota_logo.png"/>&nbsp;&nbsp;
+        <a class="navbar-brand" href="https://mam.iotamixer.io">IOTΛ MAM Explorer</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="./">Home
+                <span class="sr-only">(current)</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./about_mam">About MAM</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./about_iota">About IOTΛ</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="./about">About</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+		<div class="row">
+			<div class="col-lg-12 text-center">
+				<h2 class="mt-5">IOTΛ <b>M</b>asked <b>A</b>uthenticated <b>M</b>essaging</h2>
+				<p class="lead">Fetch IOTΛ MAM Data</p>
+					
+				<div class="input-group mb-3">
+					<input type="text" class="form-control" id="m" placeholder="Enter root address here..." aria-label="Enter root address here..." aria-describedby="basic-addon2">
+					<div class="input-group-append">
+						<button class="btn btn-primary" type="button" id="btnFetch" data-toggle="tt_fetch" title="Start fetching data from MAM-Channel."><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>						
+					</div>
+					<div class="input-group-append">
+						<button class="btn" type="button" id="btnStopFetching" data-toggle="tt_cancel" title="Stop fetching data from MAM-Channel."><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></button>
+					</div>					 
+				</div>		
+				<div class="form-row">
+					<div class="form-group col-md-2">
+						<input type="checkbox" class="form-check-input" id="autoscroll" checked="true">
+						<label class="form-check-label" for="autoscroll">Autoscroll</label>
+					</div>
+					<div class="form-group col-md-2">
+						<input type="checkbox" class="form-check-input" id="prettyPrint" checked="true">
+						<label class="form-check-label" for="prettyPrint">Pretty print</label>
+					</div>
+					<div class="form-group col-md-2">
+						<input type="checkbox" class="form-check-input" id="syntaxHighlight" checked="true">
+						<label class="form-check-label" for="syntaxHighlight">Syntaxhighlighting</label>															
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="messages" class="pre-scrollable mb-5"></div>
+	</div> 
+	<div class="container">
+		<div class="row bg-light rounded p-2">
+			<div class="col-lg-12 text-center">
+				<p class="lead"><b>Realtime MAM-Channel streaming.</b></p>
+				Test and validate any public or your restricted (soon! ☺) IOTA-MAM-Channel.
+			</div>
+		</div>
+	</div>
+   <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-bottom">
+        <div class="container">
+    		<div class="row mt-10 pt-10">
+    		         <p class="small text-secondary">
+    		        Donation<br/><span id='donationAddress'>SLVIISLDJRBKYERQCMDCNMABVKVPNQBGTWJBGXNOU9JGQZNIXMVXKMXSGZHTR9P9BZUH9NEKMKOGYEHFWFDYNPFKGY</span>
+    		         </p>
+            </div>
+        </div>
+    </div>
+    
+	<script>
+	$(function () {
+		
+		$('[data-toggle="tt_fetch"]').tooltip();
+		$('[data-toggle="tt_cancel"]').tooltip();
+		 		
+		$('#btnStopFetching').prop('disabled', true);
+		$('#donationAddress').css('cursor','hand');
+		
+		var iota = new IOTA({ provider: 'http://localhost:14265' })	
+		var simpleOut = true;
+		var data = [];
+		var socket = null;
+		var autoScroll = true;
+		var prettyPrint = true;
+		var syntaxHighlight = true;
+		var active = false;
+		
+		function pageScroll() 
+		{
+			if(autoScroll==true) 
+			{
+				var elem = document.getElementById('messages');
+				elem.scrollTop = elem.scrollHeight;
+				scrolldelay = setTimeout(pageScroll,10);
+			}
+		}
+	
+		$('#btnFetch').click(function()
+		{
+		    try 
+		    {
+		        var root = $('#m').val();
+		        
+    			if(root=='') 
+    			{			
+    				showHint('error', "ERROR", "You have to specify a root address!");
+    				return;
+    			}
+    			if(iota.valid.isAddress(root)==false)
+    			{
+    			    showHint('error', "ERROR", "Invalid root address! Check your input.");
+    				return;
+    			}
+				
+				var port = location.protocol === 'https:' ? 8443 : 8081;
+				var connString =location.protocol+"//mam.iotamixer.io";
+				console.log("trying to connect to "+connString);
+				socket = io.connect(connString);
+    			
+    			$('#messages').html("");
+    			showHint("info", "INFO", "Start fetching data from "+root);
+    		
+    		    $('[data-toggle="tt_cancel"]').tooltip('dispose');
+    			$('#btnStopFetching').prop('disabled', false);
+    			$('#prettyPrint').prop('disabled', true);
+    			$('#syntaxHighlight').prop('disabled', true);
+    					
+    			console.log($('#m').val());
+    			socket.emit('fetch', root);
+    			$('#m').val('');
+		    }
+		    catch(e) {
+		        showHint('error', "ERROR", e.message);
+    			return;
+		    }
+						
+			socket.on('fetch', function(msg)
+			{
+			    try 
+		        {
+    				pageScroll();
+    				data.push(msg);
+    				var toAppend;
+    				if($('#prettyPrint')[0].checked) {
+    					toAppend = JSON.stringify(msg,null,'\t');
+    				}
+    				else {
+    					toAppend = JSON.stringify(msg);
+    				}
+    				
+    				if($('#syntaxHighlight')[0].checked) {
+    					toAppend = $('<pre></pre>').html(doSyntaxHighlight(toAppend));
+    				}
+    				else {
+    					toAppend = $('<pre></pre>').html(toAppend);
+    				}					
+    				$('#messages').append(toAppend);		
+		        } catch(e) {
+		            showHint('error', "ERROR", e.message);
+		        }
+			});
+			
+			socket.on('connect', function() { 
+				console.log('connected');
+				showHint("success", "INFO", "Successfully connected...");
+			});
+			
+			socket.on('error', function(data) 
+			{
+				showHint("error", "ERROR", "Error...");
+				console.log('connect_failed');		
+			});
+
+			socket.on('disconnect', function() 
+			{
+				console.log('disconnect');
+				showHint("info", "INFO", "Disconnected...");
+			});	
+			return false;
+		});
+		
+		$('#autoscroll').click(function()
+		{
+			autoScroll=$('#autoscroll')[0].checked;
+		});
+		
+		$('#btnStopFetching').click(function()
+		{
+		    $('[data-toggle="tt_cancel"]').tooltip();
+			$("#prettyPrint").prop('disabled', false);
+			$('#syntaxHighlight').prop('disabled', false);
+			socket.disconnect();
+			data = [];
+			$('#btnStopFetching').prop('disabled', true);
+			return false;
+		});
+		
+		$('#donationAddress').click(function()
+		{
+		   copyToClipboard($('#donationAddress'));
+		   showHint("success", "Address copied to clipboard", $('#donationAddress').html());
+		});
+		
+		function showHint(type, title, text) 
+		{
+			toastr.options = {
+			  "closeButton": true,
+			  "debug": false,
+			  "newestOnTop": true,
+			  "progressBar": false,
+			  "positionClass": "toast-bottom-right",
+			  "preventDuplicates": false,
+			  "onclick": null,
+			  "showDuration": "300",
+			  "hideDuration": "1000",
+			  "timeOut": "5000",
+			  "extendedTimeOut": "1000",
+			  "showEasing": "swing",
+			  "hideEasing": "linear",
+			  "showMethod": "fadeIn",
+			  "hideMethod": "fadeOut"
+			}
+			console.log(text);
+			toastr[type](text, title)
+		}
+		
+		function doSyntaxHighlight(json) {
+			json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+			return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) 
+			{
+				var cls = 'number';
+				if (/^"/.test(match)) {
+					if (/:$/.test(match)) {
+						cls = 'key';
+					} else {
+						cls = 'string';
+					}
+				} else if (/true|false/.test(match)) {
+					cls = 'boolean';
+				} else if (/null/.test(match)) {
+					cls = 'null';
+				}
+				return '<span class="' + cls + '">' + match + '</span>';
+			});
+		}
+		
+		function copyToClipboard(element) {
+          var $temp = $("<input>");
+          $("body").append($temp);
+          $temp.val($(element).text()).select();
+          document.execCommand("copy");
+          $temp.remove();
+        }
+	});
+	</script>
+
+  </body>
+
+</html>
