@@ -14,7 +14,7 @@ nodejs
 ```
 
 ## Online-Version
-[mam.tangle.army](https://mam.tangle.army)
+[IOTA MAM Explorer](https://mam.tangle.army)
 
 ## Authors
 
