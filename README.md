@@ -1,4 +1,4 @@
-# Project Title
+# IOTA-MAM-Explorer
 
 IOTA-MAM-Explorer example application for fetching IOTA-MAM-Data (Masked Autheticated Messaging)
 
