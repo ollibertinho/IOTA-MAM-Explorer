@@ -24,6 +24,7 @@
     "https": "^1.0.0",
     "iota.lib.js": "^0.4.7",
     "mam.client.js": "git+https://github.com/iotaledger/mam.client.js.git",
-    "socket.io": "^2.1.1"
+    "socket.io": "^2.1.1",
+    "toastr": "^2.1.4"
   }
 }
