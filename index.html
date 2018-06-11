@@ -164,8 +164,7 @@
 
 	<script>
 	$(function () {
-	    
-		
+	    		
 		var iota = new IOTA({ provider: 'http://localhost:14265' })	
 		var simpleOut = true;
 		var data = [];
@@ -243,13 +242,16 @@
     			showHint("info", "INFO", "Start fetching data from "+root);
     		
     		    $('[data-toggle="tt_cancel"]').tooltip('dispose');
+				$('[data-toggle="tt_fetch"]').tooltip('dispose');
+
     			$('#btnStopFetching').prop('disabled', false);
     			$('#prettyPrint').prop('disabled', true);
     			$('#syntaxHighlight').prop('disabled', true);
 				$('#restrictionType').prop('disabled', true);
+				$('#btnFetch').prop('disabled', true);
     					
     			console.log($('#m').val());
-    			socket.emit('fetch', {"root":root, "sidekey":key});
+    			socket.emit('fetch', { "root":root, "sidekey":key });
     			$('#m').val('');
 		    }
 		    catch(e) {
@@ -314,9 +316,11 @@
 		function stopFetching()
 		{
 		    $('[data-toggle="tt_cancel"]').tooltip();
+			$('[data-toggle="tt_fetch"]').tooltip();
 			$("#prettyPrint").prop('disabled', false);
 			$('#syntaxHighlight').prop('disabled', false);
 			$('#restrictionType').prop('disabled', false);
+			$('#btnFetch').prop('disabled', false);
 			socket.disconnect();
 			data = [];
 			$('#btnStopFetching').prop('disabled', true);
