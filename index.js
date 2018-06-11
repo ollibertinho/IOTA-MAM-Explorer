@@ -72,11 +72,19 @@ io.on('connection', function(socket)
 			deleteFromArray(clients, socket.id);
 		});
 		
-		function fetchData(root)
+		function fetchData(mamData)
 		{		
 			try 
 			{
-				Mam.fetch(root, 'public', null, data => 
+				console.log(mamData);
+				var mamType='public';
+				var sidekey =null;
+				if(mamData.sidekey != '') {
+					sidekey = mamData.sidekey;
+					mamType = 'restricted';
+				}
+				console.log('type:'+mamType+ '; ' +mamData.root + '; ' + sidekey);
+				Mam.fetch(mamData.root, mamType, sidekey, data => 
 				{
 					try 
 					{

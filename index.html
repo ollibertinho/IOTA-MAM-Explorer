@@ -55,6 +55,7 @@
             word-break: break-all;
             white-space: normal;
         } 
+        .height-50 {height: 50px;}
         .center { text-align: center;}
         .main-content {margin-bottom: 24px; }
         .string { color: green; }
@@ -110,16 +111,24 @@
     				<h2 class="mt-5">IOTΛ <b>M</b>asked <b>A</b>uthenticated <b>M</b>essaging</h2>
     				<p class="lead">Fetch IOTΛ MAM Data</p>
     					
-    				<div class="input-group mb-3">
-    					<input type="text" class="form-control" id="m" placeholder="Enter root address here..." aria-label="Enter root address here..." aria-describedby="basic-addon2">
-    					<div class="input-group-append">
-    						<button class="btn btn-primary" type="button" id="btnFetch" data-toggle="tt_fetch" title="Start fetching data from MAM-Channel."><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>						
-    					</div>
-    					<div class="input-group-append">
-    						<button class="btn" type="button" id="btnStopFetching" data-toggle="tt_cancel" title="Stop fetching data from MAM-Channel."><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></button>
-    					</div>					 
-    				</div>		
-    				<div class="form-row">
+    				<div class="input-group">
+                      <div class="input-group-prepend">
+                        <button class="btn dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="restrictionType">Public</button>
+                        <div class="dropdown-menu">
+                          <a class="dropdown-item" href="#" id="setpublic">Public</a>
+                          <a class="dropdown-item" href="#" id="setrestricted">Restricted</a>
+                        </div>
+                      </div>
+                      <input type="text" id="m" class="form-control" placeholder="enter root-address here..."/>
+                      <input type="password" class="form-control" id="sidekey" placeholder="enter side-key here"/>
+                      <div class="input-group-append">
+                      	<button class="btn btn-primary" type="button" id="btnFetch" data-toggle="tt_fetch" title="Start fetching data from MAM-Channel."><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>						
+                      </div>
+                      <div class="input-group-append">
+                        <button class="btn" type="button" id="btnStopFetching" data-toggle="tt_cancel" title="Stop fetching data from MAM-Channel."><span class="glyphicon glyphicon-ban-circle" aria-hidden="true"></span></button>
+                      </div>	
+                    </div>
+    				<div class="form-row pt-2">
     					<div class="form-group col-md-2">
     						<input type="checkbox" class="form-check-input" id="autoscroll" checked="true">
     						<label class="form-check-label" for="autoscroll">Autoscroll</label>
@@ -141,7 +150,7 @@
     		<div class="row bg-light rounded p-2">
     			<div class="col-lg-12 text-center">
     				<p class="lead"><b>Realtime MAM-Channel streaming.</b></p>
-    				Test and validate any public or your restricted (soon! ☺) IOTA-MAM-Channel.
+    				Test and validate any public or restricted IOTA-MAM-Channel.
     			</div>
     		</div>
     	</div>
@@ -156,6 +165,31 @@
 	<script>
 	$(function () {
 	    
+		
+		var iota = new IOTA({ provider: 'http://localhost:14265' })	
+		var simpleOut = true;
+		var data = [];
+		var socket = null;
+		var autoScroll = true;
+		var prettyPrint = true;
+		var syntaxHighlight = true;
+		var active = false;
+		var isRestricted = false;
+		
+	    $("#sidekey").hide();
+
+		$("#setrestricted").click(function() {
+			isRestricted=true;
+			$("#sidekey").show();
+			$("#restrictionType").html('Restricted');	
+		});
+		
+		$("#setpublic").click(function() {
+			isRestricted=false;
+			$("#sidekey").hide();
+			$("#restrictionType").html('Public');				
+		});
+		
 		//sticky icky icky
         var footerHeight = $(".footer").height();
         $("body").css("margin-bottom", footerHeight);
@@ -166,15 +200,6 @@
 		 		
 		$('#btnStopFetching').prop('disabled', true);
 		$('#donationAddress').css('cursor','hand');
-		
-		var iota = new IOTA({ provider: 'http://localhost:14265' })	
-		var simpleOut = true;
-		var data = [];
-		var socket = null;
-		var autoScroll = true;
-		var prettyPrint = true;
-		var syntaxHighlight = true;
-		var active = false;
 		
 		function pageScroll() 
 		{
@@ -191,7 +216,8 @@
 		    try 
 		    {
 		        var root = $('#m').val();
-		        
+		        var key = $('#sidekey').val();
+				
     			if(root=='') 
     			{			
     				showHint('error', "ERROR", "You have to specify a root address!");
@@ -200,6 +226,11 @@
     			if(iota.valid.isAddress(root)==false)
     			{
     			    showHint('error', "ERROR", "Invalid root address! Check your input.");
+    				return;
+    			}
+				if(isRestricted && key=='') 
+    			{			
+    				showHint('error', "ERROR", "You have to specify a side-key if you choose a restricted MAM-Channel.");
     				return;
     			}
 				
@@ -215,13 +246,15 @@
     			$('#btnStopFetching').prop('disabled', false);
     			$('#prettyPrint').prop('disabled', true);
     			$('#syntaxHighlight').prop('disabled', true);
+				$('#restrictionType').prop('disabled', true);
     					
     			console.log($('#m').val());
-    			socket.emit('fetch', root);
+    			socket.emit('fetch', {"root":root, "sidekey":key});
     			$('#m').val('');
 		    }
 		    catch(e) {
 		        showHint('error', "ERROR", e.message);
+				stopFetching();
     			return;
 		    }
 						
@@ -248,6 +281,7 @@
     				$('#messages').append(toAppend);		
 		        } catch(e) {
 		            showHint('error', "ERROR", e.message);
+					stopFetching();
 		        }
 			});
 			
@@ -275,16 +309,19 @@
 			autoScroll=$('#autoscroll')[0].checked;
 		});
 		
-		$('#btnStopFetching').click(function()
+		$('#btnStopFetching').click(stopFetching);
+		
+		function stopFetching()
 		{
 		    $('[data-toggle="tt_cancel"]').tooltip();
 			$("#prettyPrint").prop('disabled', false);
 			$('#syntaxHighlight').prop('disabled', false);
+			$('#restrictionType').prop('disabled', false);
 			socket.disconnect();
 			data = [];
 			$('#btnStopFetching').prop('disabled', true);
 			return false;
-		});
+		}
 		
 		$('#donationAddress').click(function()
 		{
