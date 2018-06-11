@@ -75,15 +75,13 @@ io.on('connection', function(socket)
 		function fetchData(mamData)
 		{		
 			try 
-			{
-				console.log(mamData);
+			{				
 				var mamType='public';
 				var sidekey =null;
 				if(mamData.sidekey != '') {
 					sidekey = mamData.sidekey;
 					mamType = 'restricted';
-				}
-				console.log('type:'+mamType+ '; ' +mamData.root + '; ' + sidekey);
+				}				
 				Mam.fetch(mamData.root, mamType, sidekey, data => 
 				{
 					try 
