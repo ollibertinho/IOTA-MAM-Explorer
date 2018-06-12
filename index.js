@@ -7,7 +7,9 @@ var https = require('https');
 var Mam = require('mam.client.js');
 var IOTA = require('iota.lib.js');
 var ioServer = require('socket.io');
+
 var port = 8081;
+var portSSL = 8443;
 
 var iota = new IOTA({ provider: 'http://localhost:14265' })
 var clients = [];
@@ -32,8 +34,8 @@ var io = new ioServer();
 io.attach(httpServer);
 io.attach(httpsServer);
 
-httpServer.listen(8081);
-httpsServer.listen(8443);
+httpServer.listen(port);
+httpsServer.listen(portSSL);
 
 
 router.get('/', function(req, res){
