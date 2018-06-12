@@ -135,11 +135,11 @@
     					</div>
     					<div class="form-group col-md-2">
     						<input type="checkbox" class="form-check-input" id="prettyPrint" checked="true">
-    						<label class="form-check-label" for="prettyPrint">Pretty print</label>
+    						<label class="form-check-label" for="prettyPrint">Pretty print (JSON)</label>
     					</div>
     					<div class="form-group col-md-2">
     						<input type="checkbox" class="form-check-input" id="syntaxHighlight" checked="true">
-    						<label class="form-check-label" for="syntaxHighlight">Syntaxhighlighting</label>															
+    						<label class="form-check-label" for="syntaxHighlight">Syntaxhighlighting (JSON)</label>															
     					</div>
     				</div>
     			</div>
@@ -274,21 +274,29 @@
     				pageScroll();
     				data.push(msg);
     				var toAppend;
-    				if($('#prettyPrint')[0].checked) {
-    					toAppend = JSON.stringify(msg,null,'\t');
-    				}
-    				else {
-    					toAppend = JSON.stringify(msg);
-    				}
-    				
-    				if($('#syntaxHighlight')[0].checked) {
-    					toAppend = $('<pre></pre>').html(doSyntaxHighlight(toAppend));
-    				}
-    				else {
-    					toAppend = $('<pre></pre>').html(toAppend);
-    				}					
+										
+					if(msg.type=="json") {
+					
+						if($('#prettyPrint')[0].checked) {
+							toAppend = JSON.stringify(msg.data,null,'\t');
+						}
+						else {
+							toAppend = JSON.stringify(msg.data);
+						}
+						
+						if($('#syntaxHighlight')[0].checked) {
+							toAppend = $('<pre></pre>').html(doSyntaxHighlight(toAppend));
+						}
+						else {
+							toAppend = $('<pre></pre>').html(toAppend);
+						}
+					} else {
+						toAppend = $('<pre></pre>').html(msg.data);
+					}
+					
     				$('#messages').append(toAppend);		
 		        } catch(e) {
+					console.log(e);
 		            showHint('error', "ERROR", e.message);
 					stopFetching();
 		        }
@@ -299,15 +307,14 @@
 				showHint("success", "INFO", "Successfully connected...");
 			});
 			
-			socket.on('error', function(data) 
-			{
-				showHint("error", "ERROR", "Error...");
-				console.log('connect_failed');		
+			socket.on('error', function(exception){
+				showHint("error", "ERROR", 'Exception:' + exception);
+				console.log('exception: ' + exception);
+				stopFetching();
 			});
 
-			socket.on('disconnect', function() 
-			{
-				console.log('disconnect');
+			socket.on('disconnect', function(){
+				console.log('disconnected');
 				showHint("info", "INFO", "Disconnected...");
 			});	
 			return false;

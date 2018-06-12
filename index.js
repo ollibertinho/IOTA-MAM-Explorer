@@ -59,6 +59,23 @@ function deleteFromArray(my_array, element) {
   my_array.splice(position, 1);
 }
 
+function tryParseJSON (jsonString){
+    try {
+        var o = JSON.parse(jsonString);
+
+        // Handle non-exception-throwing cases:
+        // Neither JSON.parse(false) or JSON.parse(1234) throw errors, hence the type-checking,
+        // but... JSON.parse(null) returns null, and typeof null === "object", 
+        // so we must check for that, too. Thankfully, null is falsey, so this suffices:
+        if (o && typeof o === "object") {
+            return o;
+        }
+    }
+    catch (e) { }
+
+    return false;
+};
+
 io.on('connection', function(socket)
 {
 	try 
@@ -88,23 +105,31 @@ io.on('connection', function(socket)
 				{
 					try 
 					{
-						io.to(socket.id).emit('fetch', JSON.parse(iota.utils.fromTrytes(data)));			
+						var fetchedData = tryParseJSON(iota.utils.fromTrytes(data));
+						var retVal = null;
+						if(fetchedData==false) {
+							retVal = { 'type':'raw', 'data':iota.utils.fromTrytes(data) };							
+						}else {
+							retVal = { 'type':'json', 'data':JSON.parse(iota.utils.fromTrytes(data)) };
+						}
+						io.to(socket.id).emit('fetch', retVal);		
+
 					}catch(e) 
 					{
 						console.log('exception:'+e);
-						io.to(socket.id).emit('error', e);
+						io.to(socket.id).emit('error', e.message);
 					}
 				});
 			}catch(e) 
 			{
 				console.log('exception:'+e);
-				io.to(socket.id).emit('error', e);
+				io.to(socket.id).emit('error', e.message);
 			}
 		}
 
 	}catch(e) 
 	{
 		console.log('exception:'+e);
-		io.to(socket.id).emit('error', e);
+		io.to(socket.id).emit('error', e.message);
 	}
 })
