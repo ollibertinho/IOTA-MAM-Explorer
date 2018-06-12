@@ -66,6 +66,17 @@
 		.copy {cursor: copy;}
 		
 	    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
+		.box {
+			padding: 5px 5px 5px 5px;			
+		}
+		.fix-height-150 {
+			height: 150px;
+		}
+		.inner-box{
+			margin: 5px;
+			padding: 10px;
+		}
+		
     </style>
   </head>
 
@@ -129,15 +140,15 @@
                       </div>	
                     </div>
     				<div class="form-row pt-2">
-    					<div class="form-group col-md-2">
+    					<div class="form-group col-md-3">
     						<input type="checkbox" class="form-check-input" id="autoscroll" checked="true">
     						<label class="form-check-label" for="autoscroll">Autoscroll</label>
     					</div>
-    					<div class="form-group col-md-2">
+    					<div class="form-group col-md-3">
     						<input type="checkbox" class="form-check-input" id="prettyPrint" checked="true">
     						<label class="form-check-label" for="prettyPrint">Pretty print (JSON)</label>
     					</div>
-    					<div class="form-group col-md-2">
+    					<div class="form-group col-md-3">
     						<input type="checkbox" class="form-check-input" id="syntaxHighlight" checked="true">
     						<label class="form-check-label" for="syntaxHighlight">Syntaxhighlighting (JSON)</label>															
     					</div>
@@ -146,18 +157,20 @@
     		</div>
     		<div id="messages" class="pre-scrollable mb-5"></div>
     	</div> 
-    	<div class="container">
-    		<div class="row rounded p-2">
-    			<div class="col-lg-12 bg-light mb-2">
-    				<h4 class="text-center">About IOTA MAM</h4>
+		<div class="container">
+    		<div class="row">
+    			<div class="col-md-6 box">
+					<div class=" bg-light rounded fix-height-150 inner-box">
+						<h4 class="text-center">About IOTA MAM</h4>
     					Masked Authenticated Messaging (MAM) is a second layer data communication protocol based on the IOTA distributed ledger (Tangle).<br/>
                         It adds the functionality to store and access encrypted data streams on the Tangle.<br/>
+					</div>
     			</div>
-    		</div>
-    		<div class="row rounded p-2">
-    			<div class="col-lg-12 bg-light ml-2">
-    				<h4 class="text-center">Realtime IOTA-MAM-Explorer</h4>
-    				Test and validate any public or restricted IOTA-MAM-Channel with this IOTA-MAM-Explorer.
+    			<div class="col-md-6 box">
+                    <div class="bg-light rounded fix-height-150 inner-box">
+						<h4 class="text-center">Realtime IOTA-MAM-Explorer</h4>
+						Test and validate any public or restricted IOTA-MAM-Channel with this IOTA-MAM-Explorer.
+					</div>
     			</div>
     		</div>
     	</div>
