@@ -1,0 +1,42 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    meta(name="description" content="")
+    meta(name="author" content="")
+    title IOTA MAM Explorer
+    // CSS
+    link(href="bootstrap/css/bootstrap.min.css" rel="stylesheet")
+    link(href="bootstrap/css/glyphicon.min.css" rel="stylesheet")
+    link(href="bootstrap/css/custom.css" rel="stylesheet")
+    link(href="toastr/build/toastr.min.css" rel="stylesheet")
+    // JavaScript
+    script(src="jquery/jquery.min.js")
+    script(src="bootstrap/js/bootstrap.bundle.min.js")
+    script(src="toastr/build/toastr.min.js")
+    block scripts
+  body
+    // Navigation
+    nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.fixed-top
+      .container
+        img(src="images/iota_logo.png")
+        a.navbar-brand(href="https://mam.tangle.army") IOTA MAM Explorer
+        button.navbar-toggler(type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation")
+          span.navbar-toggler-icon
+        #navbarResponsive.collapse.navbar-collapse
+          ul.navbar-nav.ml-auto
+            li.nav-item.active
+              a.nav-link(href="./")
+                | Home
+                span.sr-only (current)
+            li.nav-item
+              a.nav-link(href="https://github.com/ollibertinho/IOTA-MAM-Explorer" target="_blank") GitHub Repository
+            li.nav-item
+              a.nav-link(href="./about") About
+    block content
+    .footer.navbar-dark.bg-dark
+      .container.center.wrapword.text-muted
+        | Donation? 
+        span#donationAddress.copy
+          | SLVIISLDJRBKYERQCMDCNMABVKVPNQBGTWJBGXNOU9JGQZNIXMVXKMXSGZHTR9P9BZUH9NEKMKOGYEHFWFDYNPFKGY

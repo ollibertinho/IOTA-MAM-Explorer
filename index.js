@@ -25,7 +25,11 @@ var router = express.Router();
 var mamState = Mam.init(iota);
 app.use(express.static(__dirname + '/assets'));
 app.use(express.static(__dirname + '/node_modules'));
+app.use(express.static(__dirname + '/'));
 app.use(subdomain('mam', router));
+
+app.set("view engine", "pug");
+app.set("views", __dirname + "/views");
 
 var httpServer = http.createServer(app);
 var httpsServer = https.createServer(options, app);
@@ -37,26 +41,21 @@ io.attach(httpsServer);
 httpServer.listen(port);
 httpsServer.listen(portSSL);
 
-
 router.get('/', function(req, res){
-  res.sendFile(__dirname + '/index.html');
-});
-
-router.get('/about_mam', function(req, res){
-  res.sendFile(__dirname + '/about_mam.html');
-});
-
-router.get('/about_iota', function(req, res){
-  res.sendFile(__dirname + '/about_iota.html');
+  res.render("index");
 });
 
 router.get('/about', function(req, res){
-  res.sendFile(__dirname + '/about.html');
+    res.render("about");
+});
+
+router.get('/fetch', function(req, res) {
+    res.render("index");
 });
 
 function deleteFromArray(my_array, element) {
-  position = my_array.indexOf(element);
-  my_array.splice(position, 1);
+    position = my_array.indexOf(element);
+    my_array.splice(position, 1);
 }
 
 function tryParseJSON (jsonString){
@@ -81,18 +80,31 @@ io.on('connection', function(socket)
 	try 
 	{
 		clients.push(socket.id);
-		console.log('client conntected: ' + socket.id);	
+		console.log('client connected: ' + socket.id);	
+
 		socket.on('fetch', fetchData);	
 		
-		socket.on('disconnect', function()
-		{		
-			console.log('client disconnected:'+socket.id);
+		socket.on('stopFetching', function() {
 			socket.removeListener('fetch', fetchData);
-			deleteFromArray(clients, socket.id);
+		});
+		
+		socket.on('getCurrentlyConnected', function() {
+			io.to(socket.id).emit('getCurrentlyConnected', clients.length);
+		});
+		
+		socket.on('disconnect', function(){		
+			try {
+				console.log('client disconnected:'+socket.id);
+				socket.removeListener('fetch', fetchData);
+				deleteFromArray(clients, socket.id);
+			}catch(err) {
+				console.log(err);
+			}		
 		});
 		
 		function fetchData(mamData)
 		{		
+			console.log(mamData);
 			try 
 			{				
 				var mamType='public';
@@ -101,13 +113,17 @@ io.on('connection', function(socket)
 					sidekey = mamData.sidekey;
 					mamType = 'restricted';
 				}				
+				console.log(mamData.root);
+				console.log(mamType);
+				console.log(sidekey);
 				Mam.fetch(mamData.root, mamType, sidekey, data => 
 				{
+					console.log(data);
 					try 
 					{
 						var fetchedData = tryParseJSON(iota.utils.fromTrytes(data));
 						var retVal = null;
-						if(fetchedData==false) {
+						if(fetchedData == false) {
 							retVal = { 'type':'raw', 'data':iota.utils.fromTrytes(data) };							
 						}else {
 							retVal = { 'type':'json', 'data':JSON.parse(iota.utils.fromTrytes(data)) };
