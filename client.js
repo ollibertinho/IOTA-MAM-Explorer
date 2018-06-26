@@ -30,8 +30,11 @@ var syntaxHighlight = true;
 var active = false;
 var isRestricted = false;
 
+
 $(document).ready(function() {	
     			
+	$('#loader').hide();			
+	
 	socket.on('connect', function() { 
 		console.log('connected');
 		getCurrentlyConnected();
@@ -58,6 +61,7 @@ $(document).ready(function() {
     	console.log(fetch, msg);
 	    try 
         {
+			$('#loader').hide();
 			pageScroll();
 			data.push(msg);
 			var toAppend;
@@ -167,7 +171,7 @@ $(document).ready(function() {
 			showHint('error', "ERROR", "You have to specify a side-key if you choose a restricted MAM-Channel.");
 			return;
 		}
-		
+		$('#loader').show();
 		$('#messages').html("");
 		showHint("info", "INFO", "Start fetching data from "+root);
 	
@@ -215,7 +219,7 @@ $(document).ready(function() {
 		$('#syntaxHighlight').prop('disabled', false);
 		$('#restrictionType').prop('disabled', false);
 		$('#btnFetch').prop('disabled', false);
-
+		$('#loader').hide();
 		socket.emit('stopFetching', null);
 		data = [];
 		$('#btnStopFetching').prop('disabled', true);
@@ -262,4 +266,3 @@ $(document).ready(function() {
       $temp.remove();
     }
 });
-	
