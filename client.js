@@ -18,8 +18,7 @@ toastr.options = {
 
 var port = location.protocol === 'https:' ? 8443 : 8081;
 var connString = location.protocol+"//mam.tangle.army";
-console.log("trying to connect to "+connString);
-var socket = io.connect(connString);	
+	
 
 var iota = new IOTA({ provider: 'http://localhost:14265' })	
 var simpleOut = true;
@@ -30,16 +29,17 @@ var syntaxHighlight = true;
 var active = false;
 var isRestricted = false;
 
-
 $(document).ready(function() {	
-    			
+	
+	console.log("trying to connect to "+connString);
+	var socket = io.connect(connString);		
 	$('#loader').hide();			
 	
 	socket.on('connect', function() { 
 		console.log('connected');
 		getCurrentlyConnected();
 		showHint("success", "INFO", "Successfully connected...");
-		var addr =getUrlParameter('address');
+		var addr = getUrlParameter('address');
 		if(addr!=null) {
 			doFetch(addr, '');
 		}
