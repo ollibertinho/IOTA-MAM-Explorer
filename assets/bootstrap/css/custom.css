@@ -48,9 +48,44 @@ pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; }
 .fix-height-165 {
 	height: 165px;
 }
+
+.fix-height-120 {
+	height: 120px;
+}
+
 .inner-box{
 	margin: 5px;
 	padding: 10px;
 }
+
+.width-200 {
+    width:200px;
+}
+
+.loader {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid #aaa; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.ui-dialog,.ui-dialog-content {
+    -webkit-box-sizing: content-box!important;
+    -moz-box-sizing:content-box!important;
+    box-sizing: content-box!important;
+}
+
+
+
+
+
+
 		
 		

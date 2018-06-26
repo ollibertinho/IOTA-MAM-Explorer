@@ -1,7 +1,11 @@
 extends layout.pug
 
+block scripts
+    script(src="socketio/socket.io.js")
+    script(src="iota.lib.js/dist/iota.min.js")
+    script(src="client.js")
+
 block content
-    // Page Content
     .main-content
       .container
         .row
@@ -14,43 +18,77 @@ block content
               | uthenticated 
               b M
               | essaging
+            |         
             p.lead Fetch IOTA MAM Data
+            |         
             .input-group
               .input-group-prepend
-                button#restrictionType.btn.dropdown-toggle(type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") Public
+                button#restrictionType.btn.dropdown-toggle(type='button', data-toggle='dropdown', aria-haspopup='true', aria-expanded='false') Public
+                |             
                 .dropdown-menu
-                  a#setpublic.dropdown-item(href="#") Public
-                  a#setrestricted.dropdown-item(href="#") Restricted
-              input#m.form-control(type="text" placeholder="enter root-address here...")
-              input#sidekey.form-control(type="password" placeholder="enter side-key here")
+                  a#setpublic.dropdown-item(href='#') Public
+                  a#setrestricted.dropdown-item(href='#') Restricted
+              |           
+              input#m.form-control(placeholder='enter root-address here...', type='text')
+              |           
+              input#sidekey.form-control(placeholder='enter side-key here', type='password')
+              |           
               .input-group-append
-                button#btnFetch.btn.btn-primary(type="button" data-toggle="tt_fetch" title="Start fetching data from MAM-Channel.")
-                  span.glyphicon.glyphicon-search(aria-hidden="true")
+                button#btnFetch.btn.btn-primary(type='button', data-toggle='tt_fetch', title='Start fetching data from MAM-Channel.')
+                  span.glyphicon.glyphicon-search(aria-hidden='true')
+              |           
               .input-group-append
-                button#btnStopFetching.btn(type="button" data-toggle="tt_cancel" title="Stop fetching data from MAM-Channel.")
-                  span.glyphicon.glyphicon-ban-circle(aria-hidden="true")
+                button#btnStopFetching.btn(type='button', data-toggle='tt_cancel', title='Stop fetching data from MAM-Channel.')
+                  span.glyphicon.glyphicon-ban-circle(aria-hidden='true')
+            |         
             .form-row.pt-2
               .form-group.col-md-3
-                input#autoscroll.form-check-input(type="checkbox" checked="true")
-                label.form-check-label(for="autoscroll") Autoscroll
+                input#autoscroll.form-check-input(checked='true', type='checkbox')
+                |             
+                label.form-check-label(for='autoscroll') Autoscroll
+              |           
               .form-group.col-md-3
-                input#prettyPrint.form-check-input(type="checkbox" checked="true")
-                label.form-check-label(for="prettyPrint") Pretty print (JSON)
+                input#prettyPrint.form-check-input(checked='true', type='checkbox')
+                |             
+                label.form-check-label(for='prettyPrint') Pretty print (JSON)
+              |           
               .form-group.col-md-3
-                input#syntaxHighlight.form-check-input(type="checkbox" checked="true")
-                label.form-check-label(for="syntaxHighlight") Syntaxhighlighting (JSON)
-        #messages.pre-scrollable.mb-5
+                input#syntaxHighlight.form-check-input(checked='true', type='checkbox')
+                |             
+                label.form-check-label(for='syntaxHighlight') Syntaxhighlighting (JSON)
+        |     
+        #loader(align='center')
+          .loader
+          |         Waiting for channel-data...
+        |     
+        #messages.mb-5
+      |   
       .container
         .row
           .col-md-6.box
             .bg-light.border.rounded.fix-height-165.inner-box
               h4.text-center About IOTA MAM
-              |     					Masked Authenticated Messaging (MAM) is a second layer data communication protocol based on the IOTA distributed ledger (Tangle).
+              |   &#x9;&#x9;&#x9;&#x9;&#x9;Masked Authenticated Messaging (MAM) is a second layer data communication protocol based on the IOTA distributed ledger (Tangle).
               br
-              |                         It adds the functionality to store and access encrypted data streams on the Tangle.
+              |             It adds the functionality to store and access encrypted data streams on the Tangle.
               br
+          |       
           .col-md-6.box
             .bg-light.border.rounded.fix-height-165.inner-box
               h4.text-center Realtime IOTA-MAM-Explorer
-              | 						Test and validate any public or restricted IOTA-MAM-Channel with this IOTA-MAM-Explorer.
+              |   &#x9;&#x9;&#x9;&#x9;Test and validate any public or restricted IOTA-MAM-Channel with this IOTA-MAM-Explorer.
+        | &#x9;
+        .row
+          .col-md-12.box
+            .bg-light.border.rounded.fix-height-120.inner-box
+              center
+                h4.text-center Share your IOTA-MAM-Channel
+                |   &#x9;&#x9;&#x9;&#x9;&#x9;https://mam.tangle.army/fetch?address=[YOUR-ROOT-ADDRESS]
+                br
+                | Example: 
+                a(href='https://mam.tangle.army/fetch?address=PE9KCPMWZKLXIUDKSBFMYGPLFCSJFSAGKXIUHDQDYIGEOKIRTJRZKHMFYJYBSOHQGVHEEJWVBLHMLDNVI') Sensor-Data
+              
     #clientsConnected.text-center.text-muted.small
+    
+    
+    

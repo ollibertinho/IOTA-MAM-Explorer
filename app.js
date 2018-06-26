@@ -10,6 +10,7 @@ var ioServer = require('socket.io');
 
 var port = 8081;
 var portSSL = 8443;
+var userCounter = 0;
 
 var iota = new IOTA({ provider: 'http://localhost:14265' })
 var clients = [];
@@ -29,6 +30,8 @@ app.use(express.static(__dirname + '/'));
 app.use(subdomain('mam', router));
 
 app.set("view engine", "pug");
+//disable cache for testing
+//app.set('view cache', false);
 app.set("views", __dirname + "/views");
 
 var httpServer = http.createServer(app);
@@ -75,17 +78,29 @@ function tryParseJSON (jsonString){
     return false;
 };
 
+function countUser(id) {
+	clients.push(id);
+	console.log('client connected: ' + id);	
+	userCounter++;
+	console.log("Counter", userCounter);
+	try {
+		fs.writeFileSync("counter.txt", userCounter);
+	}catch(err){
+
+	}
+}
+
 io.on('connection', function(socket)
 {
 	try 
 	{
-		clients.push(socket.id);
-		console.log('client connected: ' + socket.id);	
-
-		socket.on('fetch', fetchData);	
+		countUser(socket.id);
+		
+		socket.on('fetch', fetchData);
 		
 		socket.on('stopFetching', function() {
 			socket.removeListener('fetch', fetchData);
+			socket.on('fetch', fetchData);
 		});
 		
 		socket.on('getCurrentlyConnected', function() {
