@@ -14,8 +14,8 @@ var userCounter = 0;
 var iota = new IOTA({ provider: 'https://field.carriota.com:443' });
 
 const options = {
-  //key: fs.readFileSync("../certs/mam.iotamixer.io/privkey.pem"),
-  //cert: fs.readFileSync("../certs/mam.iotamixer.io/fullchain.pem"),
+  key: fs.readFileSync("../certs/mam.iotamixer.io/privkey.pem"),
+  cert: fs.readFileSync("../certs/mam.iotamixer.io/fullchain.pem"),
   requestCert: false,
   rejectUnauthorized: false
 };
