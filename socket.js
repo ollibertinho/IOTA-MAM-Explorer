@@ -42,7 +42,7 @@ var ioServer = function(iota) {
                 {				
                     let mamType = 'public';
                     let sidekey = null;
-                    if(mamData.sidekey != '') {
+                    if(typeof mamData.sidekey != "undefined") {
                         console.log(mamData.sidekey);
                         sidekey = mamData.sidekey;
                         mamType = 'restricted';
