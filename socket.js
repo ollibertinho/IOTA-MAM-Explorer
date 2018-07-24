@@ -40,22 +40,22 @@ var ioServer = function(iota) {
                 console.log(mamData);
                 try 
                 {				
-                    var mamType='public';
-                    var sidekey = null;
+                    let mamType = 'public';
+                    let sidekey = null;
                     if(mamData.sidekey != '') {
                         sidekey = mamData.sidekey;
                         mamType = 'restricted';
                     }				
-                    console.log(mamData.root);
-                    console.log(mamType);
-                    console.log(sidekey);
+                    console.log('root',mamData.root);
+                    console.log('type',mamType);
+                    console.log('sidekey',sidekey);
                     Mam.fetch(mamData.root, mamType, sidekey, data => 
                     {
                         console.log(data);
                         try 
                         {
-                            var fetchedData = tools.tryParseJSON(iota.utils.fromTrytes(data));
-                            var retVal = null;
+                            let fetchedData = tools.tryParseJSON(iota.utils.fromTrytes(data));
+                            let retVal = null;
                             if(fetchedData == false) {
                                 retVal = { 'type':'raw', 'data':iota.utils.fromTrytes(data) };							
                             }else {
