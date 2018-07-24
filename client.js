@@ -17,8 +17,8 @@ toastr.options = {
 }
 
 var port = location.protocol === 'https:' ? 8443 : 8081;
-//var connString = location.protocol+"//mam.tangle.army";
-var connString = "http://localhost:8081";
+var connString = location.protocol+"//mam.tangle.army";
+//var connString = "http://localhost:8081";
 
 var iota = new IOTA({ provider: 'http://localhost:14265' })	
 var simpleOut = true;
