@@ -40,8 +40,9 @@ $(document).ready(function() {
 		getCurrentlyConnected();
 		showHint("success", "INFO", "Successfully connected...");
 		var addr = getUrlParameter('address');
-		if(addr!=null) {
-			doFetch(addr, '');
+		var sidekey = getUrlParameter('key');
+		if(addr != null) {
+			doFetch(addr, sidekey);
 		}
 	});
 	
