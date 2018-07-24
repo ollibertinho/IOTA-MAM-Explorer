@@ -25,6 +25,7 @@
     "iota.lib.js": "^0.4.7",
     "mam.client.js": "git+https://github.com/iotaledger/mam.client.js.git",
     "pug": "^2.0.3",
+    "simplified-mam-lib": "git+https://github.com/ollibertinho/Simplified-MAM-Lib.git",
     "socket.io": "^2.1.1",
     "toastr": "^2.1.4"
   }
