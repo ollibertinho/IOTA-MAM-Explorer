@@ -42,6 +42,12 @@ $(document).ready(function() {
 		var addr = getUrlParameter('address');
 		var sidekey = getUrlParameter('key');
 		if(addr != null) {
+
+      var isRestrictedRequested = typeof sidekey !== 'undefined';
+      if (isRestrictedRequested) {
+        isRestricted = true;
+      }
+
 			doFetch(addr, sidekey);
 		}
 	});
