@@ -11,7 +11,7 @@ var port = 8081;
 var portSSL = 8443;
 var userCounter = 0;
 
-var iota = new IOTA({ provider: 'https://field.carriota.com:443' });
+var iota = new IOTA({ provider: 'https://field.deviota.com:443' });
 
 const options = {
   key: fs.readFileSync("../certs/mam.iotamixer.io/privkey.pem"),
